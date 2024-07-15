@@ -3,7 +3,12 @@ import DevActivityBubbleTable, { ActivityMetaInfo } from '../DevActivityBubbleTa
 import { getTableBubbleData } from '../../helpers';
 import { Card, Text } from '@chakra-ui/react';
 
-const ContributorActivityLogCard = ( { contributorData, activityToInclude }) => {
+interface ContributorActivityLogCardProps {
+  contributorData: any;
+  activityToInclude: string[];
+}
+
+const ContributorActivityLogCard: React.FC<ContributorActivityLogCardProps> = ({ contributorData, activityToInclude }) => {
   const { allDevsBubbleData, dayArr, dateArr } = getTableBubbleData(contributorData, activityToInclude);
   return (
     <div className="activity-table-wrapper">
@@ -15,9 +20,9 @@ const ContributorActivityLogCard = ( { contributorData, activityToInclude }) => 
           dayArr={dayArr}
           dateArr={dateArr}
         />
-    </Card>
+      </Card>
     </div>
   )
 }
 
-export default ContributorActivityLogCard
+export default ContributorActivityLogCard;

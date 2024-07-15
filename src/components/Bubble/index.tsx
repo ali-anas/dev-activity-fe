@@ -1,11 +1,23 @@
 import React from 'react';
-import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, Cell } from 'recharts';
+import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, Cell, TooltipProps } from 'recharts';
 
-const renderTooltip = (props) => {
+interface DataPoint {
+  x: number;
+  y: number;
+  count: number;
+  fillColor: string;
+  label: string;
+}
+
+interface BubbleProps {
+  data: DataPoint[];
+}
+
+const renderTooltip = (props: TooltipProps<number, string>) => {
   const { active, payload } = props;
 
   if (active && payload && payload.length) {
-    const data = payload[0] && payload[0].payload;
+    const data = payload[0] && payload[0].payload as DataPoint;
     const { label, fillColor, count } = data;
     if (count <= 0) {
       return null;
@@ -29,26 +41,27 @@ const renderTooltip = (props) => {
   return null;
 };
 
-const Bubble = ({ data }) => {
-  const domain = [0,24];
+const Bubble: React.FC<BubbleProps> = ({ data }) => {
+  const domain = [0, 24];
   const range = [160, 2500];
   console.log("bubble data ", data);
   return (
     <ResponsiveContainer width={140} height={140}>
-    <ScatterChart
-      width={40}
-      height={200}
-      margin={{ top: 40, right: 40, bottom: 40, left: 40 }}>
-      <XAxis type="number" dataKey="x" name="x" hide />
-      <YAxis type="number" dataKey="y" name="y" hide />
-      <ZAxis type="number" dataKey="count" name='size' domain={domain} range={range} />
-      <Tooltip  cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} animationEasing="ease" allowEscapeViewBox={{ x: true, y: true}} />
-      <Scatter name="Activities" data={data} fill="#8884d8">
-        {data?.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={entry.fillColor} />
-        ))}
-      </Scatter>
-    </ScatterChart>
+      <ScatterChart
+        width={40}
+        height={200}
+        margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
+      >
+        <XAxis type="number" dataKey="x" name="x" hide />
+        <YAxis type="number" dataKey="y" name="y" hide />
+        <ZAxis type="number" dataKey="count" name='size' domain={domain} range={range} />
+        <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} animationEasing="ease" allowEscapeViewBox={{ x: true, y: true }} />
+        <Scatter name="Activities" data={data} fill="#8884d8">
+          {data?.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.fillColor} />
+          ))}
+        </Scatter>
+      </ScatterChart>
     </ResponsiveContainer>
   );
 };

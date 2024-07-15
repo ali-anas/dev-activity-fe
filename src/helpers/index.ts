@@ -1,11 +1,15 @@
-export function parseQuery(queryString: string): { [key: string]: string } {
-  const query: { [key: string]: string } = {};
+import { DayActivity } from "../types";
+
+type QueryParams = { [key: string]: string };
+
+export function parseQuery(queryString: string): QueryParams {
+  const query: QueryParams = {};
   const pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
-  
-  for (let i = 0; i < pairs.length; i++) {
-    const pair = pairs[i].split('=');
-    query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
-  }
+
+  pairs.forEach(pairStr => {
+    const [key, value] = pairStr.split('=');
+    query[decodeURIComponent(key)] = decodeURIComponent(value || '');
+  });
 
   return query;
 }
@@ -17,92 +21,109 @@ type WorkingHours = {
   amt: number;
 };
 
-export function calculateTotalHours(data: WorkingHours[])  {
+export function calculateTotalHours(data: WorkingHours[]) {
   const whData = data.reduce((totals, day) => {
     totals.totalWh += day.wh;
     totals.totalNwh += Math.abs(day.nwh);
     return totals;
   }, { totalWh: 0, totalNwh: 0 });
 
-    return [
-    { name: "Worked in office hours", value: whData.totalWh, fill: '#9046cf'},
-    { name: "Worked in non office hours", value:whData.totalNwh, fill: '#ff8552' }
-  ]
+  return [
+    { name: "Worked in office hours", value: whData.totalWh, fill: '#9046cf' },
+    { name: "Worked in non office hours", value: whData.totalNwh, fill: '#ff8552' }
+  ];
 }
 
-export function createPrData(data) {
-  console.log('pr data: available: ', data);
-  const newData = data?.map((dayActivity) => {
+export function createPrData(data: DayActivity[]) {
+  return data?.map(dayActivity => {
     const { items: { children }, date } = dayActivity;
-    const temp = {};
-    temp[children[0].label] = children[0].count;
-    temp[children[1].label] = children[1].count;
-    temp.name = formatDate(date);
-    return temp;
-  })
-  return newData;
+    return {
+      [children[0].label]: children[0].count,
+      [children[1].label]: children[1].count,
+      name: formatDate(date, 'full')
+    };
+  });
 }
 
-export function createBugReportData(data) {
-  const newData = data?.map((dayActivity) => {
+export function createBugReportData(data: DayActivity[]) {
+  return data?.map(dayActivity => {
     const { items: { children }, date } = dayActivity;
-    const temp = {};
-    temp[children[5].label] = children[5].count;
-    temp[children[6].label] = children[6].count;
-    temp.name = formatDate(date);
-    return temp;
-  })
-  return newData;
+    return {
+      [children[5].label]: children[5].count,
+      [children[6].label]: children[6].count,
+      name: formatDate(date, 'full')
+    };
+  });
 }
 
-export function formatDate(inputDate: string, format: string): string | number {
+export function formatDate(inputDate: string, format: 'day' | 'date' | 'full'): string | number {
   const dateObj = new Date(inputDate);
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const dayOfWeek = daysOfWeek[dateObj.getDay()];
   const dayOfMonth = dateObj.getDate();
 
-  switch(format) {
-    case 'day': {
+  switch (format) {
+    case 'day':
       return dayOfWeek;
-    }
-    case 'date': {
+    case 'date':
       return dayOfMonth;
-    }
-    default: {
+    default:
       return `${dayOfWeek}, ${dayOfMonth}`;
-    }
   }
 }
 
-const coordinates = [{x: -0.1, y: 0}, {x: 0.1, y: 0}, {x: 0, y: 0.0} ,{x: 0, y: -0.1}, {x: 0.1, y: -0.1}, {x: 0, y: 0.1}, {x: 0.1, y: 0.1}]
+const coordinates = [
+  { x: -0.1, y: 0 }, { x: 0.1, y: 0 }, { x: 0, y: 0.0 },
+  { x: 0, y: -0.1 }, { x: 0.1, y: -0.1 }, { x: 0, y: 0.1 }, { x: 0.1, y: 0.1 }
+];
 
+type DeveloperActivity = {
+  dayWiseActivity: DayActivity[];
+  name: string;
+};
 
-export function getTableBubbleData(developersActivityData: any, getDataFor = []): { dateArr: number[], dayArr: string[], allDevsBubbleData: any } {
+type BubbleData = {
+  label: string;
+  count: number;
+  fillColor: string;
+  x: number;
+  y: number;
+};
+
+type BubbleDataResult = {
+  dateArr: number[];
+  dayArr: string[];
+  allDevsBubbleData: { devName: string, bubbleData: BubbleData[][] }[];
+};
+
+export function getTableBubbleData(developersActivityData: DeveloperActivity[], getDataFor: string[] = []): BubbleDataResult {
   let dateArr: number[] = [];
   let dayArr: string[] = [];
-  let allDevsBubbleData: any[] = [];
-  Object.values(developersActivityData)?.map((devData, index) => {
-    const { dayWiseActivity, name } = devData;
-    const lastWeekData =  dayWiseActivity.slice(-7);
-    const fullDateArray = lastWeekData.map((day) => day.date);
+  let allDevsBubbleData: { devName: string, bubbleData: BubbleData[][] }[] = [];
 
-    dateArr = fullDateArray.map((date: string) => formatDate(date, 'date'));
-    dayArr = fullDateArray.map((date: string) => formatDate(date, 'day'));
-    const bubbleData = lastWeekData.map((dateData) => {
-      const { items: { children: activityData }} = dateData;
-      return activityData.map((activity, idx: number) => ({
-          ...activity,
-          ...coordinates[idx],
-      })).map((activity) => ({
-          ...activity,
-          fillColor: Number(activity.count) > 0 ? activity.fillColor : 'transparent'
-        })).filter((activity) => getDataFor.includes(activity.label));
-    })
+  Object.values(developersActivityData).forEach(devData => {
+    const { dayWiseActivity, name } = devData;
+    const lastWeekData = dayWiseActivity.slice(-7);
+    const fullDateArray = lastWeekData.map(day => day.date);
+
+    dateArr = fullDateArray.map(date => formatDate(date, 'date') as number);
+    dayArr = fullDateArray.map(date => formatDate(date, 'day') as string);
+
+    const bubbleData = lastWeekData.map(dateData => {
+      const { items: { children: activityData } } = dateData;
+      return activityData.map((activity, idx) => ({
+        ...activity,
+        ...coordinates[idx],
+        fillColor: Number(activity.count) > 0 ? activity.fillColor : 'transparent'
+      })).filter(activity => getDataFor.includes(activity.label));
+    });
+
     allDevsBubbleData.push({
       devName: name,
       bubbleData,
-    })
-  })
+    });
+  });
+
   return { dateArr, dayArr, allDevsBubbleData };
-};
+}

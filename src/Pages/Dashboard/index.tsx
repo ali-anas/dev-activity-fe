@@ -4,10 +4,13 @@ import { getTableBubbleData } from '../../helpers';
 import DevActivityBubbleTable, { ActivityMetaInfo } from '../../components/DevActivityBubbleTable';
 import './Dashboard.css';
 
-const Dashboard = () => {
-  const { developersActivityData, activityMetadata } = useSelector(state => state.app);
-  const activityToInclude = activityMetadata.map((activity) => activity.label);
+const Dashboard: React.FC = () => {
+  const { developersActivityData, activityMetadata } = useSelector((state: any) => state.app);
+  
+  const activityToInclude = activityMetadata.map((activity: any) => activity.label);
+
   const { allDevsBubbleData, dayArr, dateArr } = getTableBubbleData(developersActivityData, activityToInclude);
+
   return (
     <div className="activity-table-wrapper">
       <div className="activity-table-content">
@@ -15,7 +18,7 @@ const Dashboard = () => {
         <DevActivityBubbleTable 
           allDevsBubbleData={allDevsBubbleData}
           dayArr={['', ...dayArr]}
-          dateArr={['', ...dateArr]}
+          dateArr={[null, ...dateArr]}
           showDeveloperColumn
         />
       </div>
