@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { getTableBubbleData } from '../../helpers';
-import { Spinner, Box } from '@chakra-ui/react';
 import DevActivityBubbleTable, { ActivityMetaInfo } from '../../components/DevActivityBubbleTable';
 import './Dashboard.css';
 import { API_STATUS } from '../../constants';
