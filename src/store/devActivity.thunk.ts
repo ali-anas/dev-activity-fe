@@ -3,7 +3,7 @@ import { setActivityMetadata, setDevsActivityData } from './app.slice';
 
 export function devActivityInit() {
   return async (dispatch: typeof store.dispatch, getState: ReturnType<typeof store.getState>) => {
-    const url = 'http://localhost:8080/api/devs-activity'
+    const url = `${import.meta.env.VITE_BE_API_URL}/api/devs-activity`
 
     const fetchData = async () => {
       try {
