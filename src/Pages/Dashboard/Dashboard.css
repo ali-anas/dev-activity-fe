@@ -1,0 +1,17 @@
+.activity-table-wrapper {
+  padding: 20px;
+  max-width: 90%;
+  text-align: center;
+  margin: 0 auto;
+  overflow: auto;
+  padding-top: 56px;
+}
+
+.activity-table-content {
+  width: fit-content;
+  margin: 0 auto;
+  padding: 40px;
+  border: 2px solid #e5e8ec;
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+}

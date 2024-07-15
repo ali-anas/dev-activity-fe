@@ -1,0 +1,3 @@
+.summary-card-metric tr td:first-child {
+  border-right: 0px !important;
+}
