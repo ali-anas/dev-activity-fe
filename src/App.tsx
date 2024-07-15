@@ -18,7 +18,7 @@ const App: React.FC = () => {
       }
     };
     fetchData();
-  }, [dispatch]);
+  }, []);
 
   return (
     <>
@@ -27,7 +27,7 @@ const App: React.FC = () => {
       </Switch>
       <Switch>
         <Route exact path="/" component={Dashboard} />
-        <Route path="/contributor" component={ContributorProfile} />
+        <Route exact path="/contributor" component={ContributorProfile} />
       </Switch>
     </>
   );

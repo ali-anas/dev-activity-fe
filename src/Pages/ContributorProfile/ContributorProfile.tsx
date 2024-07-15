@@ -10,23 +10,19 @@ import ContributorActivityLogCard from '../../components/ContributorActivityLogC
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { WorkingHoursData } from '../../constants';
+import { REQ_ACTIVITIES_FOR_ACTIVITY_LOG_CHART, API_STATUS } from '../../constants';
+import Loader from '../../components/Loader';
 
 const ContributorProfile: React.FC = () => {
   const location = useLocation();
   const { search } = location;
   const query = parseQuery(search);
   const developerName = query.name;
-
-  if (!developerName) {
-    return <h1>Developer does not exist!</h1>;
+  const { developersActivityData, apiStatus } = useSelector((state: any) => state.app);
+  if (apiStatus === API_STATUS.LOADING || !Object.values(developersActivityData).length) {
+    return <Loader />;
   }
-
-  const { developersActivityData } = useSelector((state: any) => state.app);
   const contributorData = developersActivityData[developerName];
-  const REQ_ACTIVITIES = ['PR Open', 'PR Merged', 'Commits', 'PR Reviewed'];
-
-  
-
   const totalWhData = calculateTotalHours(WorkingHoursData);
 
   return (
@@ -37,13 +33,13 @@ const ContributorProfile: React.FC = () => {
             <ArrowBackIcon mr="1" /> Go back to Home Page
           </Text>
         </Link>
-        <ContributorSummarCard summaryData={contributorData.totalActivity} />
+        <ContributorSummarCard summaryData={contributorData?.totalActivity} />
         <Flex gap="4" wrap="wrap">
           <ContributorBurnoutCard data={WorkingHoursData} totalWhData={totalWhData} />
-          <ContributorDeploymentCard contributorData={contributorData} />
-          <ContributorBugReportCard contributorData={contributorData} />
+          <ContributorDeploymentCard contributorData={contributorData ?? {}} />
+          <ContributorBugReportCard contributorData={contributorData ?? {}} />
         </Flex>
-        <ContributorActivityLogCard contributorData={{ [developerName]: contributorData }} activityToInclude={REQ_ACTIVITIES} />
+        <ContributorActivityLogCard contributorData={{ [developerName]: contributorData }} activityToInclude={REQ_ACTIVITIES_FOR_ACTIVITY_LOG_CHART} />
       </Box>
     </>
   );

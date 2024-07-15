@@ -42,3 +42,11 @@ export const WorkingHoursData = [
     amt: 0,
   },
 ];
+
+export const REQ_ACTIVITIES_FOR_ACTIVITY_LOG_CHART = ['PR Open', 'PR Merged', 'Commits', 'PR Reviewed'];
+
+export const API_STATUS = {
+  READY : 'ready',
+  LOADING: 'loading',
+  ERROR: 'error',
+};

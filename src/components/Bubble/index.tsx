@@ -44,7 +44,6 @@ const renderTooltip = (props: TooltipProps<number, string>) => {
 const Bubble: React.FC<BubbleProps> = ({ data }) => {
   const domain = [0, 24];
   const range = [160, 2500];
-  console.log("bubble data ", data);
   return (
     <ResponsiveContainer width={140} height={140}>
       <ScatterChart
