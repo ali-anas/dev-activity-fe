@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
 import Dashboard from './Pages/Dashboard';
 import Header from './components/Header';
+import PageNotFound from './Pages/PageNotFound';
 import ContributorProfile from './Pages/ContributorProfile';
 import { devActivityInit } from './store/devActivity.thunk';
 
@@ -27,7 +28,8 @@ const App: React.FC = () => {
       </Switch>
       <Switch>
         <Route exact path="/" component={Dashboard} />
-        <Route exact path="/contributor" component={ContributorProfile} />
+        <Route exact path="/contributor/:slug" component={ContributorProfile} />
+        <Route path="*" component={PageNotFound} />
       </Switch>
     </>
   );

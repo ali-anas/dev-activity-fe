@@ -86,7 +86,7 @@ const ContributorDeploymentCard: React.FC<ContributorDeploymentCardProps> = ({ c
   const avgDeploymentFreq = (totalDeployment / period).toFixed(2);
 
   return (
-    <Card variant="outline" borderWidth={2} width="fit-content" p="6" height="fit-content" flexGrow={1}>
+    <Card variant="outline" borderWidth={2} width="fit-content" p="6" flexGrow={1}>
       <Text fontSize='2xl' fontWeight='bold'>Deployment Frequency</Text>
       <Box display={{ base: 'none', md: 'block' }}>
         <BarChart
