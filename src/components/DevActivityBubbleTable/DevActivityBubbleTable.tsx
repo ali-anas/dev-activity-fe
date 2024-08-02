@@ -71,7 +71,7 @@ const DevActivityBubbleTable: React.FC<DevActivityBubbleTableProps> = ({ allDevs
               <tr key={index}>
                 {showDeveloperColumn ? (
                   <td>
-                    <Link to={`/contributor?name=${devName}`}>
+                    <Link to={`/contributor/${devName}`}>
                       {devName}
                       <ExternalLinkIcon ml="2" />
                     </Link>

@@ -2,18 +2,6 @@ import { DayActivity } from "../types";
 
 type QueryParams = { [key: string]: string };
 
-export function parseQuery(queryString: string): QueryParams {
-  const query: QueryParams = {};
-  const pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
-
-  pairs.forEach(pairStr => {
-    const [key, value] = pairStr.split('=');
-    query[decodeURIComponent(key)] = decodeURIComponent(value || '');
-  });
-
-  return query;
-}
-
 type WorkingHours = {
   name: string;
   wh: number;
