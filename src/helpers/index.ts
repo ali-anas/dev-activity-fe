@@ -1,7 +1,5 @@
 import { DayActivity } from "../types";
 
-type QueryParams = { [key: string]: string };
-
 type WorkingHours = {
   name: string;
   wh: number;
